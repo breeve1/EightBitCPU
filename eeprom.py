@@ -160,8 +160,9 @@ class row:
 seven_segment = {
          #  I7  I6  I5  I4  I3  I2  I1  I0
          #  DP  A   B   C   D   E   F   G
+        -2:[0,  0,  0,  0,  0,  0,  0,  0   ],
         -1:[0,  0,  0,  0,  0,  0,  0,  1   ],
-        0:[ 0,  0,  0,  0,  0,  0,  0,  0   ],
+        0:[ 0,  1,  1,  1,  1,  1,  1,  0   ],
         1:[ 0,  0,  1,  1,  0,  0,  0,  0   ],
         2:[ 0,  1,  1,  0,  1,  1,  0,  1   ],
         3:[ 0,  1,  1,  1,  1,  0,  0,  1   ],
@@ -434,15 +435,21 @@ def write_seven_segment(verify):
         segment.generate([], verify)
 
         #01 - tens
-        segment = DefinedSegment([0,0,1]+address, WriteSegment(seven_segment[tens]))
+        if(d > 9):
+            segment = DefinedSegment([0,0,1]+address, WriteSegment(seven_segment[tens]))
+        else:
+            segment = DefinedSegment([0,0,1]+address, WriteSegment(seven_segment[-2]))
         segment.generate([], verify)
 
         #10 - hundreds
-        segment = DefinedSegment([0,1,0]+address, WriteSegment(seven_segment[hundreds]))
+        if(d > 99):
+            segment = DefinedSegment([0,1,0]+address, WriteSegment(seven_segment[hundreds]))
+        else:
+            segment = DefinedSegment([0,1,0]+address, WriteSegment(seven_segment[-2]))
         segment.generate([], verify)
 
         #sign. This is off
-        segment = DefinedSegment([0,1,1]+address, WriteSegment([0,0,0,0,0,0,0,0]))
+        segment = DefinedSegment([0,1,1]+address, WriteSegment(seven_segment[-2]))
         segment.generate([], verify)
 
         #signed
@@ -468,16 +475,23 @@ def write_seven_segment(verify):
         segment.generate([], verify)
 
         #01 - tens
-        segment = DefinedSegment([1,0,1]+address, WriteSegment(seven_segment[tens]))
+        if(d > 9):
+            segment = DefinedSegment([1,0,1]+address, WriteSegment(seven_segment[tens]))
+        else:
+            segment = DefinedSegment([1,0,1]+address, WriteSegment(seven_segment[-2]))
         segment.generate([], verify)
 
         #10 - hundreds
-        segment = DefinedSegment([1,1,0]+address, WriteSegment(seven_segment[hundreds]))
+        if(d > 99):
+            segment = DefinedSegment([1,1,0]+address, WriteSegment(seven_segment[hundreds]))
+        else:
+            segment = DefinedSegment([1,1,0]+address, WriteSegment(seven_segment[-2]))
         segment.generate([], verify)
+
 
         #sign.
         if(address[0] == 0):
-            segment = DefinedSegment([1,1,1]+address, WriteSegment([0,0,0,0,0,0,0,0]))
+            segment = DefinedSegment([1,1,1]+address, WriteSegment(seven_segment[-2]))
         else:
             segment = DefinedSegment([1,1,1]+address, WriteSegment(seven_segment[-1]))
         
@@ -500,6 +514,7 @@ def main(args):
     if(len(args) > 0):
         eeprom_block = int(args[0])
 
+    #program_controller(eeprom_block)
     program_seven_segment()
 
 
